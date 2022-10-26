@@ -1,0 +1,15 @@
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/host
+    username: root
+    password: 1111
+
+server:
+  port: 7777
+
+inet:
+  timeout: 10
