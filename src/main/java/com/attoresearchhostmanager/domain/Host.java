@@ -24,6 +24,7 @@ public class Host {
     private Long id;
 
     @Column(name = "HOST_NAME", unique = true, nullable = false)
+    @JsonIgnore
     private String name;
 
     @Column(name = "HOST_IP", unique = true, nullable = false)

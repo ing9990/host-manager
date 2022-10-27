@@ -4,11 +4,14 @@ import com.attoresearchhostmanager.dto.HostEditRequestDto;
 import com.attoresearchhostmanager.dto.HostRequestDto;
 import com.attoresearchhostmanager.service.HostService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+
+import static com.attoresearchhostmanager.AttoResearchHostManagerApplication.hostCache;
 
 /**
  * @author Taewoo
@@ -17,6 +20,8 @@ import javax.validation.Valid;
 
 @RestController
 @RequiredArgsConstructor
+@CrossOrigin("*")
+@Slf4j
 @RequestMapping("/api/v1/hosts")
 public class HostController {
 
@@ -24,7 +29,14 @@ public class HostController {
 
     @GetMapping("")
     public ResponseEntity<?> findAllHosts() {
-        return null;
+        log.info(hostCache.toString());
+        return ResponseEntity.ok()
+                             .body(hostCache);
+    }
+
+    @GetMapping("/{name}")
+    public ResponseEntity<?> findHostByName(@PathVariable String name) {
+        return ResponseEntity.ok().body(hostService.findHostByName(name));
     }
 
     @PostMapping("")

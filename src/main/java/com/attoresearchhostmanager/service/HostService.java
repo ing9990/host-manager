@@ -1,6 +1,5 @@
 package com.attoresearchhostmanager.service;
 
-import com.attoresearchhostmanager.config.WebSocketHandler;
 import com.attoresearchhostmanager.domain.Host;
 import com.attoresearchhostmanager.dto.DefaultResponseDtoEntity;
 import com.attoresearchhostmanager.dto.HostEditRequestDto;
@@ -12,12 +11,17 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
+
+import static com.attoresearchhostmanager.AttoResearchHostManagerApplication.hostCache;
 
 /**
  * @author Taewoo
@@ -30,11 +34,9 @@ import java.time.LocalDateTime;
 public class HostService {
 
     private final HostRepository hostRepository;
-    private final WebSocketHandler webSocketHandler;
 
     @Value("${inet.timeout}")
     private int timeout;
-
 
     public DefaultResponseDtoEntity addHost(HostRequestDto hostRequestDto) {
         log.info("호스트 등록 요청: [" + hostRequestDto.getHostName() + "]");
@@ -50,12 +52,12 @@ public class HostService {
         var name = hostEditRequestDto.getHostName();
         var ip = hostEditRequestDto.getIp();
 
-        if (hostRepository.existsByIp(ip)) {
+        if (hostRepository.existsByIp(ip))
             return DefaultResponseDtoEntity.of(HttpStatus.BAD_REQUEST, "Duplicated ip address. " + ip);
-        }
 
-        updateIpByName(name, ip);
-        return DefaultResponseDtoEntity.ok("Host Modified successfully.", hostRepository.findHostByName(name));
+        return updateIpByName(name, ip) == 0 ?
+                DefaultResponseDtoEntity.of(HttpStatus.NO_CONTENT, "No changes.") :
+                DefaultResponseDtoEntity.ok("Host Modified successfully.", hostRepository.findHostByName(name));
     }
 
 
@@ -66,6 +68,22 @@ public class HostService {
         return col == 1 ? DefaultResponseDtoEntity.ok("Host deleted successfully.") : DefaultResponseDtoEntity.ok("Host not found: " + name);
     }
 
+    public DefaultResponseDtoEntity findAllHosts() {
+        log.info("호스트 전체 조회");
+        return DefaultResponseDtoEntity
+                .ok("Hosts full lookup.", hostRepository.findAll());
+    }
+
+    public DefaultResponseDtoEntity findHostByName(String name) {
+        var host = hostCache.get(name);
+
+        if (host == null)
+            throw new HostNotFoundException(name);
+
+        return DefaultResponseDtoEntity
+                .ok("Host lookup successful. " + name, host);
+    }
+
 
     private Host requestDtoToHost(HostRequestDto hostRequestDto) {
         boolean isConnect = connectionTest(hostRequestDto.getIp());
@@ -73,8 +91,8 @@ public class HostService {
         return Host.builder().name(hostRequestDto.getHostName()).ip(hostRequestDto.getIp()).alive(isConnect ? Host.AliveStatus.Connected : Host.AliveStatus.Disconnected).lastConnection(isConnect ? LocalDateTime.now() : null).createAt(LocalDateTime.now()).updatedAt(LocalDateTime.now()).build();
     }
 
-    private void updateIpByName(String name, String ip) {
-        hostRepository.updateIpByName(name, ip);
+    private int updateIpByName(String name, String ip) {
+        return hostRepository.updateIpByName(name, ip, LocalDateTime.now());
     }
 
     private boolean connectionTest(String hostName) {
@@ -99,4 +117,28 @@ public class HostService {
     private Host getHostByHostName(String hostName) {
         return hostRepository.findHostByName(hostName).orElseThrow(() -> new HostNotFoundException(hostName));
     }
+
+    @Transactional(readOnly = true)
+    public List<Host> findAll() {
+        return hostRepository.findAll();
+    }
+
+    @Transactional
+    public void updateAlive(String k, boolean b) {
+        int col = hostRepository.updateAliveById(k, b ? Host.AliveStatus.Connected : Host.AliveStatus.Disconnected);
+
+        if (col >= 1) {
+            updateLastAliveNow(k, LocalDateTime.now());
+        }
+    }
+
+    public void updateUpdatedAtNow(String name, LocalDateTime time) {
+        hostRepository.updateUpdatedAtNow(name, time);
+    }
+
+    public void updateLastAliveNow(String name, LocalDateTime time) {
+        hostRepository.updateLastAlive(name, time);
+    }
+
+
 }

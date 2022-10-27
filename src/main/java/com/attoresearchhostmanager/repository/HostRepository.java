@@ -26,11 +26,27 @@ public interface HostRepository extends JpaRepository<Host, Long> {
 
     @Transactional
     @Modifying
-    @Query("update Host h set h.ip = ?2 where h.name = ?1")
-    void updateIpByName(String name, String ip);
+    @Query("update Host h set h.ip = ?2, h.updatedAt=?3 where h.name = ?1")
+    int updateIpByName(String name, String ip, LocalDateTime now);
 
     @Transactional
     @Modifying
     @Query("delete from Host h where h.name = ?1")
     int deleteHostByName(String name);
+
+    @Transactional
+    @Modifying
+    @Query("update Host h set h.alive = ?2 where h.name = ?1")
+    int updateAliveById(String name, Host.AliveStatus disconnected);
+
+    @Transactional
+    @Modifying
+    @Query("update Host h set h.lastConnection = ?2 where h.name = ?1")
+    void updateLastAlive(String name, LocalDateTime now);
+
+    @Transactional
+    @Modifying
+    @Query("update Host h set h.updatedAt = ?2 where h.name = ?1")
+    void updateUpdatedAtNow(String name, LocalDateTime now);
+
 }
