@@ -81,7 +81,7 @@ public class HostService {
             throw new HostNotFoundException(name);
 
         return DefaultResponseDtoEntity
-                .ok("Host lookup successful. " + name, host);
+                .ok("Host lookup successful. ", host);
     }
 
 

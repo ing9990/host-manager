@@ -36,7 +36,8 @@ public class HostController {
 
     @GetMapping("/{name}")
     public ResponseEntity<?> findHostByName(@PathVariable String name) {
-        return ResponseEntity.ok().body(hostService.findHostByName(name));
+        return ResponseEntity.ok()
+                             .body(hostService.findHostByName(name));
     }
 
     @PostMapping("")

@@ -21,7 +21,7 @@ Controller에서 Body를 받을 때 유효성 검증을 거치도록 했습니�
 ```
 
 3. REST API
-
+- [API 테스트 바로가기](https://documenter.getpostman.com/view/19080293/2s8YK4rmjm)
 ```
 Path: {URI}/api/v1/hosts
 - GET: 모든 호스트 조회
