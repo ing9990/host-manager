@@ -12,4 +12,4 @@ server:
   port: 7777
 
 inet:
-  timeout: 10
+  timeout: 100
