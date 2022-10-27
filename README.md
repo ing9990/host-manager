@@ -60,9 +60,10 @@ create table host
 );
 ```
 
-5. API 테스트 
+5. API 테스트
+
 - GET http://localhost:7777/api/v1/hosts : 호스트 전체 조회 (178ms)
-  - ```json {
+    - ```json {
     "호스트1": {
         "ip": "192.168.150.38",
         "alive": "Disconnected",
@@ -91,8 +92,9 @@ create table host
         "createAt": "2022-10-27T16:38:57.587999",
         "updatedAt": "2022-10-27T23:33:29.683564"
     }
+
 }
-  
+
 
 <hr/>
 
@@ -111,7 +113,7 @@ create table host
 내가 선택한 방법 (2)
 ```
 
-**2. 호스트마다 InetAddress.isReachable()의 timeout을 기다려야 하는데 100개의 호스트가 모두 Unreachable 상태일 때 1초안에 응답하는 방법**
+**2. 100개의 호스트가 모두 Unreachable 상태일 때 1초안에 응답하는 방법**
 
 ```
 1. 1초 안에 모든 호스트로 요청을 보낼 수 있도록 Timeout을 짧게 줄인다.
@@ -142,5 +144,7 @@ Socket config 작성 완료
 - Scheduler를 사용한 방법으로 확정.
 
 timeout을 기다리지 않고 다음 호스트로 Ping을 보내는 방식
+
+fix: Disconnect -> Connect일 경우 lastConnection update.
 ```
 
