@@ -60,10 +60,9 @@ create table host
 );
 ```
 
-5. API 테스트
-
+5. API 테스트 
 - GET http://localhost:7777/api/v1/hosts : 호스트 전체 조회 (178ms)
-    - ```json {
+  - ```json {
     "호스트1": {
         "ip": "192.168.150.38",
         "alive": "Disconnected",
@@ -92,9 +91,8 @@ create table host
         "createAt": "2022-10-27T16:38:57.587999",
         "updatedAt": "2022-10-27T23:33:29.683564"
     }
-
 }
-
+  
 
 <hr/>
 
