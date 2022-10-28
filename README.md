@@ -21,7 +21,9 @@ Controller에서 Body를 받을 때 유효성 검증을 거치도록 했습니�
 ```
 
 3. REST API
+
 - [API 테스트 바로가기](https://documenter.getpostman.com/view/19080293/2s8YK4rmjm)
+
 ```
 Path: {URI}/api/v1/hosts
 - GET: 모든 호스트 조회
@@ -60,9 +62,10 @@ create table host
 );
 ```
 
-5. API 테스트 
-- GET http://localhost:7777/api/v1/hosts : 호스트 전체 조회 (178ms)
-  - ```json {
+5. API 테스트
+
+- GET http://localhost:7777/api/v1/hosts : 호스트 전체 조회
+    - ```json {
     "호스트1": {
         "ip": "192.168.150.38",
         "alive": "Disconnected",
@@ -91,8 +94,9 @@ create table host
         "createAt": "2022-10-27T16:38:57.587999",
         "updatedAt": "2022-10-27T23:33:29.683564"
     }
+
 }
-  
+
 
 <hr/>
 
