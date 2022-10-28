@@ -20,27 +20,17 @@ Controller에서 Body를 받을 때 유효성 검증을 거치도록 했습니�
 - 2. format에 맞지 않는 Ip일 경우
 ```
 
-3. REST API
+3. EndPoint
 
 - [API 테스트 바로가기](https://documenter.getpostman.com/view/19080293/2s8YK4rmjm)
 
-```
-Path: {URI}/api/v1/hosts
-- GET: 모든 호스트 조회
-- POST: 호스트 등록 requestBody(name,ip) 
-- PUT: 호스트 정보 수정 (name,ip)
-
-Path: {URI}/api/v1/hosts/{name}
-- GET: 호스트 단건 조회
-- DELETE: name을 사용한 호스트 삭제
-
-Response Status
-200: 조회, 성공
-201: 호스트가 등록됨.
-204: 수정 및 삭제 과정에서 변경사항이 없음.
-
-400: name, ip가 중복된 경우
-```
+| EndPoint             | METHOD | Description | Param        |
+|----------------------|--------|-------------|--------------|
+| /api/v1/hosts        | GET    | 호스트 전체 조회   |              |
+| /api/v1/hosts        | POST   | 호스트 등록      | Body(name, ip) |
+| /api/v1/hosts        | PUT    | 호스트 수정      | Body(name, ip) |
+| /api/v1/hosts/{name} | GET    | 호스트 단건 조회   | Path(name)   |
+| /api/v1/hosts/{name} | DELETE | 호스트 삭제      | Path(name)     |
 
 4. DDL
 
