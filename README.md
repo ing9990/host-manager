@@ -92,10 +92,9 @@ create table host
 ```
 
 5. TEST
-6.
 
 ```
-# 호스트 전체 조회
+# 호스트 전체 조회 (100개)
 GET http://localhost:7777/api/v1/hosts
 - 200 OK  19ms
 - IP 수정 후 곧 바로 Host 조회 시 Alive 상태 실시간 감지 O
