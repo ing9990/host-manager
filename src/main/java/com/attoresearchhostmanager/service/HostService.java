@@ -93,7 +93,7 @@ public class HostService {
         }
     }
 
-    @Async(value = "asyncTaskExecutor")
+    @Async(value = "pingExecutor")
     public void pingTest(Host host) {
         try {
             var isReachable = InetAddress.getByName(host.getIp()).isReachable(timeout);

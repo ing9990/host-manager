@@ -20,7 +20,7 @@ public class AsyncConfig {
     private static String THREAD_NAME_PREFIX = "ping-test";
 
     @Bean
-    public Executor asyncTaskExecutor() {
+    public Executor pingExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         executor.setCorePoolSize(CORE_POOL_SIZE);
         executor.setMaxPoolSize(MAX_POOL_SIZE);
