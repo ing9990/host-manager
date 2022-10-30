@@ -71,6 +71,42 @@ DuplicatedIpConstraint
 }
 ```
 
+- 연결된 호스트가 100개 이상일 때
+```json
+{
+    "message": "More than 100 hosts are connected.",
+    "httpStatus": "OK"
+}
+```
+
+- 단건 조회 성공
+```json
+{
+    "message": "Host lookup successful. ",
+    "data": {
+        "name": "네이버",
+        "ip": "180.182.54.1",
+        "alive": "Connected",
+        "lastConnection": "2022-10-31T02:54:24.104128",
+        "createAt": "2022-10-30T20:17:09.422515",
+        "updatedAt": "2022-10-31T02:23:53.540409"
+    },
+    "httpStatus": "OK"
+}
+```
+
+- 단건 조회 실패
+```json
+{
+    "timestamp": "2022-10-30T17:55:09.844+00:00",
+    "status": 404,
+    "error": "Not Found",
+    "path": "/api/v1/hosts/asd"
+}
+```
+
+
+
 4. DDL
 
 ```mysql

@@ -55,7 +55,7 @@ public class HostService {
 
         var host = requestDtoToHost(hostRequestDto);
 
-        return saveHost(host) == null ? DefaultResponseDtoEntity.of(HttpStatus.NO_CONTENT, "More than 100 hosts are connected.") : DefaultResponseDtoEntity.of(HttpStatus.CREATED, "Host registered successfully.");
+        return saveHost(host) == null ? DefaultResponseDtoEntity.of(HttpStatus.OK, "More than 100 hosts are connected.") : DefaultResponseDtoEntity.of(HttpStatus.CREATED, "Host registered successfully.");
     }
 
     @Transactional
@@ -79,25 +79,15 @@ public class HostService {
 
         var col = hostRepository.deleteHostByName(name);
 
-        return col == 1 ? DefaultResponseDtoEntity.ok("Host deleted successfully.") : DefaultResponseDtoEntity.of(HttpStatus.OK, "Host not found: " + name);
+        return col == 1 ? DefaultResponseDtoEntity.ok("Host deleted successfully.") :
+                DefaultResponseDtoEntity.of(HttpStatus.OK, "Host not found: " + name);
     }
 
-
-    public void test() {
-        var remain = 100 - hostRepository.count();
-
-        for (int i = 100; i < remain + 100; i++) {
-            var addr = "192." + i + "." + i + ".38";
-            hostRepository.save(requestDtoToHost(new HostRequestDto("host" + i, addr)));
-            log.info("생성된 ip: " + addr);
-        }
-    }
 
     @Async(value = "pingExecutor")
     public void pingTest(Host host) {
         try {
             var isReachable = InetAddress.getByName(host.getIp()).isReachable(timeout);
-            log.info(host.getName() + ": " + isReachable + " <- pingTest");
             updateAlive(host.getName(), isReachable);
         } catch (IOException e) {
             updateAlive(host.getName(), false);

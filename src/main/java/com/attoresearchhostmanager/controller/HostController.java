@@ -44,10 +44,6 @@ public class HostController {
         return ResponseEntity.status(res.getHttpStatus()).body(res);
     }
 
-    @PostMapping("/test")
-    public void test() {
-        hostService.test();
-    }
 
     @PutMapping("")
     public ResponseEntity<?> editHost(@Valid @RequestBody HostEditRequestDto hostEditRequestDto) {
