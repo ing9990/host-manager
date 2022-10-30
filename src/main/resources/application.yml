@@ -8,11 +8,12 @@ spring:
     username: root
     password: 1111
 
-server:
-  port: 7777
-
 inet:
-  timeout: 100
+  timeout: 30
+
 scheduler:
   cache: 1000 * 2
   ping: 1000 * 4
+  
+server:
+  port: 7777

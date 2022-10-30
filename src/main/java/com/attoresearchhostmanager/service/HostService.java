@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,8 +18,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.time.LocalDateTime;
 import java.util.List;
-
-import static com.attoresearchhostmanager.AttoResearchHostManagerApplication.hostCache;
+import java.util.concurrent.Executor;
 
 /**
  * @author Taewoo
@@ -69,9 +69,10 @@ public class HostService {
     }
 
     public DefaultResponseDtoEntity findHostByName(String name) {
-        var host = hostCache.get(name);
+        var host = hostRepository.findHostByName(name);
 
-        if (host == null) throw new HostNotFoundException(name);
+        if (!host.isPresent())
+            throw new HostNotFoundException(name);
 
         return DefaultResponseDtoEntity.ok("Host lookup successful. ", host);
     }
@@ -140,6 +141,15 @@ public class HostService {
             var addr = i + "192." + i + "." + i + ".38";
             log.info("Ip address: " + addr);
             hostRepository.save(requestDtoToHost(new HostRequestDto("host" + i, addr)));
+        }
+    }
+
+    @Async
+    public void pingTest(Host host) {
+        try {
+            updateAlive(host.getName(), InetAddress.getByName(host.getIp()).isReachable(timeout));
+        } catch (IOException e) {
+            updateAlive(host.getName(), false);
         }
     }
 

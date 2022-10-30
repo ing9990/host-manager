@@ -10,8 +10,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
-import static com.attoresearchhostmanager.AttoResearchHostManagerApplication.hostCache;
-
 /**
  * @author Taewoo
  */
@@ -26,10 +24,11 @@ public class HostController {
 
     private final HostService hostService;
 
-    @GetMapping("")
+    @GetMapping()
     public ResponseEntity<?> findAllHosts() {
-        log.info(hostCache.toString());
-        return ResponseEntity.ok().body(hostCache);
+        log.info("hello");
+
+        return ResponseEntity.ok().body(hostService.findAllHosts());
     }
 
     @GetMapping("/{name}")

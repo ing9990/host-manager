@@ -111,7 +111,13 @@ fix: Disconnect -> Connect일 경우 lastConnection update.
 ### 10/30
 
 ```
-- Host 100개 무작위 등록 후 조회 테스트 (132ms)
+- Host 100개 무작위 등록 후 조회 테스트
 - CORS 로직 추가
+- @Async를 활용한 ThreadPool 사용
+- Scheduler fixedDelay를 1000ms로 변경 
+
+* Hosts Disconnected 98개 Connected 2개로 테스트 
+- 조회 (132ms)
+- 연결 끊김 시 실시간 감지 1초안에 가능   
 ```
 
