@@ -16,9 +16,9 @@ import java.util.concurrent.Executor;
 public class AsyncConfig {
     private static int CORE_POOL_SIZE = 15;
     private static int MAX_POOL_SIZE = 25;
-    private static int QUEUE_CAPACITY = 10;
-    private static String THREAD_NAME_PREFIX = "host-async-task";
-    
+    private static int QUEUE_CAPACITY = Integer.MAX_VALUE;
+    private static String THREAD_NAME_PREFIX = "ping-test";
+
     @Bean
     public Executor asyncTaskExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();

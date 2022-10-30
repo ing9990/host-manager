@@ -93,10 +93,12 @@ public class HostService {
         }
     }
 
-    @Async
+    @Async(value = "asyncTaskExecutor")
     public void pingTest(Host host) {
         try {
-            updateAlive(host.getName(), InetAddress.getByName(host.getIp()).isReachable(timeout));
+            var isReachable = InetAddress.getByName(host.getIp()).isReachable(timeout);
+            log.info(host.getName() + ": " + isReachable + " <- pingTest");
+            updateAlive(host.getName(), isReachable);
         } catch (IOException e) {
             updateAlive(host.getName(), false);
         }
@@ -107,13 +109,13 @@ public class HostService {
     }
 
 
-    private Host requestDtoToHost(HostRequestDto hostRequestDto) {
+    public Host requestDtoToHost(HostRequestDto hostRequestDto) {
         boolean isConnect = connectionTest(hostRequestDto.getIp());
 
         return Host.builder().name(hostRequestDto.getHostName()).ip(hostRequestDto.getIp()).alive(isConnect ? Host.AliveStatus.Connected : Host.AliveStatus.Disconnected).lastConnection(isConnect ? LocalDateTime.now() : null).createAt(LocalDateTime.now()).updatedAt(LocalDateTime.now()).build();
     }
 
-    private int updateIpByName(String name, String ip) {
+    public int updateIpByName(String name, String ip) {
         int changes = hostRepository.updateIpByName(name, ip);
         var host = getHostByHostName(name);
 
