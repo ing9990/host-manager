@@ -9,7 +9,7 @@ spring:
     password: 1111
 
 inet:
-  timeout: 30
+  timeout: 300
 
 scheduler:
   cache: 1000 * 2
