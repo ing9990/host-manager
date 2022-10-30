@@ -37,19 +37,14 @@ public class HostController {
         return ResponseEntity.status(res.getHttpStatus()).body(res);
     }
 
-    @PostMapping("")
+    @PostMapping()
     public ResponseEntity<?> addHost(@Valid @RequestBody HostRequestDto hostRequestDto) {
         var res = hostService.addHost(hostRequestDto);
 
         return ResponseEntity.status(res.getHttpStatus()).body(res);
     }
 
-    @PostMapping("/test")
-    public void test() {
-        hostService.test();
-    }
-
-    @PutMapping("")
+    @PutMapping()
     public ResponseEntity<?> editHost(@Valid @RequestBody HostEditRequestDto hostEditRequestDto) {
         var res = hostService.editHost(hostEditRequestDto);
 

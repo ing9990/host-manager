@@ -15,13 +15,13 @@ import org.springframework.http.HttpStatus;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class DefaultResponseDtoEntity {
 
-    private String message;
+    protected String message;
 
-    private Object data;
+    protected Object data;
 
-    private String path;
+    protected String path;
 
-    private HttpStatus httpStatus;
+    protected HttpStatus httpStatus;
 
     public static DefaultResponseDtoEntity of(HttpStatus httpStatus, String message) {
         return DefaultResponseDtoEntity.builder().httpStatus(httpStatus).message(message).build();

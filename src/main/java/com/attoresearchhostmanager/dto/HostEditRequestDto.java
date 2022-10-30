@@ -17,6 +17,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class HostEditRequestDto {
+
     @NotEmpty(message = "Host name is empty")
     private String hostName;
 

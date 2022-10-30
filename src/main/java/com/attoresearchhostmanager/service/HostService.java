@@ -6,18 +6,21 @@ import com.attoresearchhostmanager.dto.HostEditRequestDto;
 import com.attoresearchhostmanager.dto.HostRequestDto;
 import com.attoresearchhostmanager.exception.HostNotFoundException;
 import com.attoresearchhostmanager.repository.HostRepository;
+import com.attoresearchhostmanager.service.scheduler.PingService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.net.InetAddress;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author Taewoo
@@ -30,13 +33,15 @@ import java.util.List;
 public class HostService {
 
     private final HostRepository hostRepository;
+    private final PingService pingService;
 
     @Value("${inet.timeout}")
     private int timeout;
 
     @Transactional(readOnly = true)
     public DefaultResponseDtoEntity findAllHosts() {
-        var hosts = hostRepository.findAll();
+        pingTest();
+        var hosts = findAll();
 
         return hosts.size() != 0 ? DefaultResponseDtoEntity.ok("Hosts full lookup.", hosts)
                 : DefaultResponseDtoEntity.ok("Hosts is empty.", hosts);
@@ -55,7 +60,7 @@ public class HostService {
 
         var host = requestDtoToHost(hostRequestDto);
 
-        return saveHost(host) == null ? DefaultResponseDtoEntity.of(HttpStatus.NO_CONTENT, "More than 100 hosts are connected.") : DefaultResponseDtoEntity.of(HttpStatus.CREATED, "Host registered successfully.");
+        return saveHost(host) == null ? DefaultResponseDtoEntity.of(HttpStatus.OK, "More than 100 hosts are connected.") : DefaultResponseDtoEntity.of(HttpStatus.CREATED, "Host registered successfully.");
     }
 
     @Transactional
@@ -82,50 +87,31 @@ public class HostService {
         return col == 1 ? DefaultResponseDtoEntity.ok("Host deleted successfully.") : DefaultResponseDtoEntity.of(HttpStatus.OK, "Host not found: " + name);
     }
 
-
-    public void test() {
-        var remain = 100 - hostRepository.count();
-
-        for (int i = 100; i < remain + 100; i++) {
-            var addr = "192." + i + "." + i + ".38";
-            hostRepository.save(requestDtoToHost(new HostRequestDto("host" + i, addr)));
-            log.info("생성된 ip: " + addr);
-        }
-    }
-
-    @Async(value = "pingExecutor")
-    public void pingTest(Host host) {
-        try {
-            var isReachable = InetAddress.getByName(host.getIp()).isReachable(timeout);
-            log.info(host.getName() + ": " + isReachable + " <- pingTest");
-            updateAlive(host.getName(), isReachable);
-        } catch (IOException e) {
-            updateAlive(host.getName(), false);
-        }
-    }
-
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public List<Host> findAll() {
         return hostRepository.findAll();
     }
 
-
-    public Host requestDtoToHost(HostRequestDto hostRequestDto) {
+    private Host requestDtoToHost(HostRequestDto hostRequestDto) {
         boolean isConnect = connectionTest(hostRequestDto.getIp());
 
         return Host.builder().name(hostRequestDto.getHostName()).ip(hostRequestDto.getIp()).alive(isConnect ? Host.AliveStatus.Connected : Host.AliveStatus.Disconnected).lastConnection(isConnect ? LocalDateTime.now() : null).createAt(LocalDateTime.now()).updatedAt(LocalDateTime.now()).build();
     }
 
-    public int updateIpByName(String name, String ip) {
+    private int updateIpByName(String name, String ip) {
         int changes = hostRepository.updateIpByName(name, ip);
         var host = getHostByHostName(name);
 
         if (changes != 0)
             updateUpdatedAtNow(name, LocalDateTime.now());
 
-        pingTest(host);
+        pingService.pingTest(host);
         return changes;
     }
 
+    private void pingTest() {
+        findAll().forEach(pingService::pingTest);
+    }
 
     private boolean connectionTest(String hostName) {
         try {
@@ -138,10 +124,8 @@ public class HostService {
     }
 
     private Host saveHost(Host host) {
-        if (getCount() >= 100) {
-            log.warn("More than 100 hosts are connected.");
+        if (getCount() >= 100)
             return null;
-        }
 
         return hostRepository.save(host);
     }
@@ -150,20 +134,8 @@ public class HostService {
         return hostRepository.findHostByName(hostName).orElseThrow(() -> new HostNotFoundException(hostName));
     }
 
-    private void updateAlive(String k, boolean b) {
-        hostRepository.updateAliveById(k, b ? Host.AliveStatus.Connected : Host.AliveStatus.Disconnected);
-        var host = hostRepository.getByName(k);
-
-        if (host.getAlive() == Host.AliveStatus.Connected)
-            updateLastAliveNow(k, LocalDateTime.now());
-    }
-
     private void updateUpdatedAtNow(String name, LocalDateTime time) {
         hostRepository.updateUpdatedAtNow(name, time);
-    }
-
-    private void updateLastAliveNow(String name, LocalDateTime time) {
-        hostRepository.updateLastAlive(name, time);
     }
 
     private long getCount() {
