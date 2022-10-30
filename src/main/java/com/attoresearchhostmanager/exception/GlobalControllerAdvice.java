@@ -32,13 +32,18 @@ public class GlobalControllerAdvice {
             var fieldName = field.getField();
             var message = field.getDefaultMessage();
 
-            errorList.add(Error.builder().field(fieldName).message(message).path(request.getRequestURI()).build());
+            errorList.add(Error.builder()
+                               .field(fieldName)
+                               .message(message)
+                               .path(request.getRequestURI())
+                               .build());
         });
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                 ErrorResponse.builder()
                              .errorList(errorList)
-                             .message("").requestUrl(request.getRequestURI()).statusCode(HttpStatus.BAD_REQUEST.value()).resultCode("FAIL").build());
+                             .requestUrl(request.getRequestURI())
+                             .statusCode(HttpStatus.BAD_REQUEST.value())
+                             .build());
     }
-
 }

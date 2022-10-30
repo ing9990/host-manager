@@ -1,9 +1,8 @@
-package com.attoresearchhostmanager.service.Job;
+package com.attoresearchhostmanager.service.scheduler;
 
 import com.attoresearchhostmanager.service.HostService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -21,9 +20,6 @@ public class PingScheduler {
 
     @Scheduled(fixedDelay = 1000)
     public void pingToHostsScheduler() {
-        hostService.findAll().forEach((host) -> {
-            log.info("호스트 연결 검사: " + host.getName() + " : " + host.getIp());
-            hostService.pingTest(host);
-        });
+        hostService.findAll().forEach(hostService::pingTest);
     }
 }

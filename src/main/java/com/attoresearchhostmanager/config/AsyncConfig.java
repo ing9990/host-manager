@@ -18,7 +18,7 @@ public class AsyncConfig {
     private static int MAX_POOL_SIZE = 25;
     private static int QUEUE_CAPACITY = 10;
     private static String THREAD_NAME_PREFIX = "host-async-task";
-
+    
     @Bean
     public Executor asyncTaskExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();

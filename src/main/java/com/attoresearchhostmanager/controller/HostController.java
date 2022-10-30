@@ -5,6 +5,7 @@ import com.attoresearchhostmanager.dto.HostRequestDto;
 import com.attoresearchhostmanager.service.HostService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,14 +27,15 @@ public class HostController {
 
     @GetMapping()
     public ResponseEntity<?> findAllHosts() {
-        log.info("hello");
-
-        return ResponseEntity.ok().body(hostService.findAllHosts());
+        var res = hostService.findAllHosts();
+        return ResponseEntity.status(res.getHttpStatus()).body(res);
     }
 
     @GetMapping("/{name}")
     public ResponseEntity<?> findHostByName(@PathVariable String name) {
-        return ResponseEntity.ok().body(hostService.findHostByName(name));
+        var res = hostService.findHostByName(name);
+
+        return ResponseEntity.status(res.getHttpStatus()).body(res);
     }
 
     @PostMapping("")
@@ -46,7 +48,6 @@ public class HostController {
     // 데이터베이스에 host를 100개 채우는 API
     @PostMapping("/test")
     public void test() {
-        log.info("test");
         hostService.test();
     }
 

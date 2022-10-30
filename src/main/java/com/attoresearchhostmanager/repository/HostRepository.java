@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -26,8 +27,8 @@ public interface HostRepository extends JpaRepository<Host, Long> {
 
     @Transactional
     @Modifying
-    @Query("update Host h set h.ip = ?2, h.updatedAt=?3 where h.name = ?1")
-    int updateIpByName(String name, String ip, LocalDateTime now);
+    @Query("update Host h set h.ip = ?2 where h.name = ?1")
+    int updateIpByName(String name, String ip);
 
     @Transactional
     @Modifying
@@ -37,7 +38,7 @@ public interface HostRepository extends JpaRepository<Host, Long> {
     @Transactional
     @Modifying
     @Query("update Host h set h.alive = ?2 where h.name = ?1")
-    int updateAliveById(String name, Host.AliveStatus disconnected);
+    void updateAliveById(String name, Host.AliveStatus disconnected);
 
     @Transactional
     @Modifying
@@ -49,4 +50,6 @@ public interface HostRepository extends JpaRepository<Host, Long> {
     @Query("update Host h set h.updatedAt = ?2 where h.name = ?1")
     void updateUpdatedAtNow(String name, LocalDateTime now);
 
+    @Query("select h from Host h where h.name = ?1")
+    Host getByName(String name);
 }

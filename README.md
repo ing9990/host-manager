@@ -27,13 +27,56 @@ DuplicatedIpConstraint
 
 - [API 테스트 바로가기](https://documenter.getpostman.com/view/19080293/2s8YK4rmjm)
 
-| EndPoint             | METHOD | Description | Param          |
-|----------------------|--------|------------|----------------|
-| /api/v1/hosts        | GET    | 호스트 전체 조회  |                |
-| /api/v1/hosts        | POST   | 호스트 등록     | Body(name, ip) |
-| /api/v1/hosts        | PUT    | 호스트 수정     | Body(name, ip) |
-| /api/v1/hosts/{name} | GET    | 호스트 단건 조회  | Path(name)     |
-| /api/v1/hosts/{name} | DELETE | 호스트 삭제     | Path(name)     |
+| EndPoint             | METHOD | Description | Param          | Required |
+|----------------------|--------|-------------|----------------|----------|
+| /api/v1/hosts        | GET    | 호스트 전체 조회   |                |          |
+| /api/v1/hosts        | POST   | 호스트 등록      | Body(name, ip) | O        |
+| /api/v1/hosts        | PUT    | 호스트 수정      | Body(name, ip) | O        |
+| /api/v1/hosts/{name} | GET    | 호스트 단건 조회   | Path(name)     | O        |
+| /api/v1/hosts/{name} | DELETE | 호스트 삭제      | Path(name)     | O        |
+
+- 유효성 검사 성공 응답
+
+```json
+{
+  "message": "Host registered successfully.",
+  "httpStatus": "CREATED"
+}
+```
+
+- 유효성 검사 실패 응답
+
+```json
+
+{
+  "statusCode": 400,
+  "requestUrl": "/api/v1/hosts",
+  "errorList": [
+    {
+      "field": "hostName",
+      "message": "Host name is empty",
+      "path": "/api/v1/hosts"
+    },
+    {
+      "field": "ip",
+      "message": "Invalid ip address.",
+      "path": "/api/v1/hosts"
+    }
+  ]
+}
+```
+
+- HostNotFound 핸들링 (404)
+
+```java
+
+@ResponseStatus(value = HttpStatus.NOT_FOUND)
+public class HostNotFoundException extends RuntimeException {
+    public HostNotFoundException(String message) {
+        super("Host not found: " + message);
+    }
+}
+```
 
 4. DDL
 
