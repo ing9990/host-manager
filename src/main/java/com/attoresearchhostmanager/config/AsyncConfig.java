@@ -15,13 +15,13 @@ import java.util.concurrent.Executor;
 @Configuration
 public class AsyncConfig {
 
-    private static final int CORE_POOL_SIZE = 15;
-    private static final int MAX_POOL_SIZE = 25;
-    private static final int QUEUE_CAPACITY = 10;
-    private static final String THREAD_NAME_PREFIX = "host-async-task";
+    private static final int CORE_POOL_SIZE = 100;
+    private static final int MAX_POOL_SIZE = 100;
+    private static final int QUEUE_CAPACITY = Integer.MAX_VALUE;
+    private static final String THREAD_NAME_PREFIX = "host-ping-";
 
     @Bean
-    public Executor asyncTaskExecutor() {
+    public Executor hostExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         executor.setCorePoolSize(CORE_POOL_SIZE);
         executor.setMaxPoolSize(MAX_POOL_SIZE);

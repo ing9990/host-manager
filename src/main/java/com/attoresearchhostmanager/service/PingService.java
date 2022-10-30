@@ -16,12 +16,13 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.time.LocalDateTime;
 
+
 /**
  * @author Taewoo
  */
 
 
-@Service
+@Component
 @RequiredArgsConstructor
 @Slf4j
 public class PingService {
@@ -31,9 +32,9 @@ public class PingService {
     @Value("${inet.timeout}")
     private static int timeout;
 
-    @Async
+    @Async(value = "hostExecutor")
     public void pingTest(Host host) {
-        log.info("PingTest: " + host.getName() + " : " + host.getAlive());
+        log.info("PingTest: " + host.getIp() + " : " + host.getAlive());
         try {
             var isReachable = InetAddress.getByName(host.getIp()).isReachable(timeout);
             log.info(host.getName() + ": " + isReachable + " <- pingTest");

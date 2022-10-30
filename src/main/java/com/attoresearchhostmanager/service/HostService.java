@@ -17,6 +17,8 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author Taewoo
@@ -34,20 +36,16 @@ public class HostService {
     @Value("${inet.timeout}")
     private int timeout;
 
-    @Transactional(readOnly = true)
     public DefaultResponseDtoEntity findAllHosts() {
         findAll().forEach(pingService::pingTest);
-
         var hosts = hostRepository.findAll();
-
         return hosts.size() != 0 ? DefaultResponseDtoEntity.ok("Hosts full lookup.", hosts)
                 : DefaultResponseDtoEntity.ok("Hosts is empty.", hosts);
     }
 
-    @Transactional(readOnly = true)
     public DefaultResponseDtoEntity findHostByName(String name) {
+        findAll().forEach(pingService::pingTest);
         var host = hostRepository.findHostByName(name).orElseThrow(() -> new HostNotFoundException(name));
-
         return DefaultResponseDtoEntity.ok("Host lookup successful. ", host);
     }
 
