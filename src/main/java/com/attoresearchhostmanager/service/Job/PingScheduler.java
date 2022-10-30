@@ -29,7 +29,10 @@ public class PingScheduler {
 
     @Scheduled(fixedDelay = 1000 * 2)
     public void cacheScheduler() {
-        hostCache.clear();
+        if (hostCache.size() != hostService.getCount())
+            hostCache.clear();
+
+        log.info("호스트 " + hostCache.size() + "건 관리 중");
 
         hostService.findAll().forEach(host -> {
             hostCache.put(host.getName(), host);

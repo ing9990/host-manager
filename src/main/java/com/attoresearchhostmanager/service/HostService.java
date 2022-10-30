@@ -55,9 +55,7 @@ public class HostService {
         if (hostRepository.existsByIp(ip))
             return DefaultResponseDtoEntity.of(HttpStatus.BAD_REQUEST, "Duplicated ip address. " + ip);
 
-        return updateIpByName(name, ip) == 0 ?
-                DefaultResponseDtoEntity.of(HttpStatus.NO_CONTENT, "No changes.") :
-                DefaultResponseDtoEntity.ok("Host Modified successfully.", hostRepository.findHostByName(name));
+        return updateIpByName(name, ip) == 0 ? DefaultResponseDtoEntity.of(HttpStatus.NO_CONTENT, "No changes.") : DefaultResponseDtoEntity.ok("Host Modified successfully.", hostRepository.findHostByName(name));
     }
 
 
@@ -70,18 +68,15 @@ public class HostService {
 
     public DefaultResponseDtoEntity findAllHosts() {
         log.info("호스트 전체 조회");
-        return DefaultResponseDtoEntity
-                .ok("Hosts full lookup.", hostRepository.findAll());
+        return DefaultResponseDtoEntity.ok("Hosts full lookup.", hostRepository.findAll());
     }
 
     public DefaultResponseDtoEntity findHostByName(String name) {
         var host = hostCache.get(name);
 
-        if (host == null)
-            throw new HostNotFoundException(name);
+        if (host == null) throw new HostNotFoundException(name);
 
-        return DefaultResponseDtoEntity
-                .ok("Host lookup successful. ", host);
+        return DefaultResponseDtoEntity.ok("Host lookup successful. ", host);
     }
 
 
@@ -141,4 +136,17 @@ public class HostService {
     }
 
 
+    public void test() {
+        var remain = 100 - hostRepository.count();
+
+        for (int i = 100; i < remain + 100; i++) {
+            var addr = i + "192." + i + "." + i + ".38";
+            log.info("Ip address: " + addr);
+            hostRepository.save(requestDtoToHost(new HostRequestDto("host" + i, addr)));
+        }
+    }
+
+    public long getCount() {
+        return hostRepository.count();
+    }
 }

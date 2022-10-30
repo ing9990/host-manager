@@ -30,14 +30,12 @@ public class HostController {
     @GetMapping("")
     public ResponseEntity<?> findAllHosts() {
         log.info(hostCache.toString());
-        return ResponseEntity.ok()
-                             .body(hostCache);
+        return ResponseEntity.ok().body(hostCache);
     }
 
     @GetMapping("/{name}")
     public ResponseEntity<?> findHostByName(@PathVariable String name) {
-        return ResponseEntity.ok()
-                             .body(hostService.findHostByName(name));
+        return ResponseEntity.ok().body(hostService.findHostByName(name));
     }
 
     @PostMapping("")
@@ -47,12 +45,18 @@ public class HostController {
         return ResponseEntity.status(res.getHttpStatus()).body(res);
     }
 
+    // 데이터베이스에 host를 100개 채우는 API
+    @PostMapping("/test")
+    public void test() {
+        log.info("test");
+        hostService.test();
+    }
+
     @PutMapping("")
     public ResponseEntity<?> editHost(@Valid @RequestBody HostEditRequestDto hostEditRequestDto) {
         var res = hostService.editHost(hostEditRequestDto);
 
-        return ResponseEntity.status(res.getHttpStatus())
-                             .body(res);
+        return ResponseEntity.status(res.getHttpStatus()).body(res);
     }
 
     @DeleteMapping("/{name}")
