@@ -28,6 +28,6 @@ public class HostRequestDto {
     @DuplicatedIpConstraint(message = "Duplicate ip address.")
     @NotEmpty(message = "Ip Address is empty.")
     @Pattern(regexp = "^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$",
-             message = "Invalid ip address.")
+            message = "Invalid ip address.")
     private String ip;
 }

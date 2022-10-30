@@ -1,8 +1,5 @@
 package com.attoresearchhostmanager.dto;
 
-import com.attoresearchhostmanager.exception.valid.DuplicatedHostConstraint;
-import com.attoresearchhostmanager.exception.valid.DuplicatedIpConstraint;
-
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Pattern;
 
