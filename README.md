@@ -2,7 +2,12 @@
 
 <hr/>
 
-## 패턴
+0. ✔️
+
+```
+- 조회 시 호스트마다 isReachable()의 timeout을 300ms로 고정했습니다.
+- ORM은 JPA를 사용했습니다. 
+```
 
 1. Response
 
@@ -66,18 +71,6 @@ DuplicatedIpConstraint
 }
 ```
 
-- HostNotFound 핸들링 (404)
-
-```java
-
-@ResponseStatus(value = HttpStatus.NOT_FOUND)
-public class HostNotFoundException extends RuntimeException {
-    public HostNotFoundException(String message) {
-        super("Host not found: " + message);
-    }
-}
-```
-
 4. DDL
 
 ```mysql
@@ -97,49 +90,3 @@ create table host
         unique (host_ip)
 );
 ```
-
-<hr/>
-
-## 고민한 부분
-
-**1. 호스트에 연결이 끊겼을 경우 서버에서 알아채는 방법**
-
-```
-@Scheduler
-스케쥴러가 fixedDelay마다 데이터베이스에 저장된 Hosts를 대상으로 pingTest를 실행함.
- 
-@Async MultiThread
-다중 스레드이기 때문에 timeout를 기다리는 동안 다른 Thread가 Job을 실행.
-```
-
-<hr/>
-
-### 10/27
-
-```
-기본적인 CRUD 개발 완료 
-Socket config 작성 완료
-```
-
-### 10/28
-
-```
-소켓 로직 제거
-Scheduler를 사용한 방법으로 확정.
-
-fix: Disconnect -> Connect일 경우 lastConnection update.
-```
-
-### 10/30
-
-```
-- Host 100개 무작위 등록 후 조회 테스트
-- CORS 로직 추가
-- @Async를 활용한 ThreadPool 사용
-- Scheduler fixedDelay를 1000ms로 변경 
-
-* Hosts Disconnected 98개 Connected 2개로 테스트 
-- 조회 (132ms)
-- 연결 끊김 시 실시간 감지 가능 (최대 1000ms)
-```
-
