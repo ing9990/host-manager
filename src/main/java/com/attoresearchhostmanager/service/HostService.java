@@ -6,10 +6,12 @@ import com.attoresearchhostmanager.dto.HostEditRequestDto;
 import com.attoresearchhostmanager.dto.HostRequestDto;
 import com.attoresearchhostmanager.exception.HostNotFoundException;
 import com.attoresearchhostmanager.repository.HostRepository;
+import com.attoresearchhostmanager.service.ping.PingService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,8 +19,6 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author Taewoo
@@ -31,20 +31,24 @@ import java.util.concurrent.ConcurrentHashMap;
 public class HostService {
 
     private final HostRepository hostRepository;
-    private final PingService pingService;
 
     @Value("${inet.timeout}")
     private int timeout;
 
+    public void updatePing() {
+        hostRepository.findAll()
+                .forEach(PingService::pingTest);
+    }
+
     public DefaultResponseDtoEntity findAllHosts() {
-        findAll().forEach(pingService::pingTest);
+        updatePing();
         var hosts = hostRepository.findAll();
         return hosts.size() != 0 ? DefaultResponseDtoEntity.ok("Hosts full lookup.", hosts)
                 : DefaultResponseDtoEntity.ok("Hosts is empty.", hosts);
     }
 
     public DefaultResponseDtoEntity findHostByName(String name) {
-        findAll().forEach(pingService::pingTest);
+        updatePing();
         var host = hostRepository.findHostByName(name).orElseThrow(() -> new HostNotFoundException(name));
         return DefaultResponseDtoEntity.ok("Host lookup successful. ", host);
     }
@@ -93,6 +97,18 @@ public class HostService {
             hostRepository.save(requestDtoToHost(new HostRequestDto("host" + i, addr)));
             log.info("생성된 ip: " + addr);
         }
+    }
+
+    public void updateAlive(String k, boolean b) {
+        hostRepository.updateAliveById(k, b ? Host.AliveStatus.Connected : Host.AliveStatus.Disconnected);
+        var host = hostRepository.getByName(k);
+
+        if (host.getAlive() == Host.AliveStatus.Connected)
+            updateLastAliveNow(k, LocalDateTime.now());
+    }
+
+    private void updateLastAliveNow(String name, LocalDateTime time) {
+        hostRepository.updateLastAlive(name, time);
     }
 
 

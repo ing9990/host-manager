@@ -1,7 +1,8 @@
-package com.attoresearchhostmanager.service;
+package com.attoresearchhostmanager.service.ping;
 
 import com.attoresearchhostmanager.domain.Host;
 import com.attoresearchhostmanager.repository.HostRepository;
+import com.attoresearchhostmanager.service.HostService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,39 +23,24 @@ import java.time.LocalDateTime;
  */
 
 
-@Component
 @RequiredArgsConstructor
 @Slf4j
 public class PingService {
 
-    private final HostRepository hostRepository;
+    private final HostService hostService;
 
     @Value("${inet.timeout}")
     private static int timeout;
 
     @Async(value = "hostExecutor")
     public void pingTest(Host host) {
-        log.info("PingTest: " + host.getIp() + " : " + host.getAlive());
         try {
             var isReachable = InetAddress.getByName(host.getIp()).isReachable(timeout);
-            log.info(host.getName() + ": " + isReachable + " <- pingTest");
-            updateAlive(host.getName(), isReachable);
+            log.info(host.getName() + ": " + isReachable);
+            hostService.updateAlive(host.getName(), isReachable);
         } catch (IOException e) {
-            updateAlive(host.getName(), false);
+            hostService.updateAlive(host.getName(), false);
         }
-    }
-
-    public void updateAlive(String k, boolean b) {
-        hostRepository.updateAliveById(k, b ? Host.AliveStatus.Connected : Host.AliveStatus.Disconnected);
-        var host = hostRepository.getByName(k);
-
-        if (host.getAlive() == Host.AliveStatus.Connected)
-            updateLastAliveNow(k, LocalDateTime.now());
-
-    }
-
-    public void updateLastAliveNow(String name, LocalDateTime time) {
-        hostRepository.updateLastAlive(name, time);
     }
 
 }
