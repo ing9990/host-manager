@@ -14,9 +14,12 @@ Service -> Controller의 Response는 DefaultResponseDtoEntity로 통일했습니
 2. Validation
 
 ```
-Controller에서 Body를 받을 때 유효성 검증을 거치도록 했습니다.
+Controller에서 Body를 받을 때 어노테이션을 사용한 유효성 검증을 거치도록 했습니다.
 
+DuplicatedHostConstraint
 - 1. Host, Ip가 빈 값이거나 중복일 경우
+
+DuplicatedIpConstraint
 - 2. format에 맞지 않는 Ip일 경우
 ```
 
@@ -70,7 +73,7 @@ create table host
 선택한 방법 (2)
 ```
 
-**2. 100개의 호스트가 모두 Unreachable 상태일 때 1초안에 응답하는 방법**
+**2. 호스트가 모두 Unreachable 상태일 때 1초안에 응답하는 방법**
 
 ```
 1. 1초 안에 모든 호스트로 요청을 보낼 수 있도록 Timeout을 짧게 줄인다.
