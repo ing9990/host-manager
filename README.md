@@ -2,33 +2,7 @@
 
 <hr/>
 
-0. ✔️
-
-```
-- 조회 시 호스트마다 isReachable()의 timeout을 100ms로 고정했습니다.
-- ORM은 JPA를 사용했습니다. 
-```
-
-1. Response
-
-```
-Controller와 Advice의 Response는 ResponseEntity<T>로 통일하였습니다.
-Service -> Controller의 Response는 DefaultResponseDtoEntity로 통일했습니다.
-```
-
-2. Validation
-
-```
-Controller에서 Body를 받을 때 어노테이션을 사용한 유효성 검증을 거치도록 했습니다.
-
-DuplicatedHostConstraint
-- 1. Host, Ip가 빈 값이거나 중복일 경우
-
-DuplicatedIpConstraint
-- 2. format에 맞지 않는 Ip일 경우
-```
-
-3. EndPoint
+## EndPoint
 
 - [API 테스트 바로가기](https://documenter.getpostman.com/view/19080293/2s8YK4rmjm)
 
@@ -107,7 +81,7 @@ DuplicatedIpConstraint
 
 
 
-4. DDL
+## DDL
 
 ```mysql
 create table host
