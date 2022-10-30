@@ -100,3 +100,7 @@ create table host
         unique (host_ip)
 );
 ```
+
+```
+release/v2 브랜치는 Scheduler를 사용하지 않은 버전입니다.
+```
