@@ -5,7 +5,7 @@
 0. ✔️
 
 ```
-- 조회 시 호스트마다 isReachable()의 timeout을 300ms로 고정했습니다.
+- 조회 시 호스트마다 isReachable()의 timeout을 100ms로 고정했습니다.
 - ORM은 JPA를 사용했습니다. 
 ```
 

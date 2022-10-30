@@ -34,6 +34,22 @@ public class HostService {
     @Value("${inet.timeout}")
     private int timeout;
 
+    @Transactional(readOnly = true)
+    public DefaultResponseDtoEntity findAllHosts() {
+        var hosts = hostRepository.findAll();
+
+        return hosts.size() != 0 ? DefaultResponseDtoEntity.ok("Hosts full lookup.", hosts)
+                : DefaultResponseDtoEntity.ok("Hosts is empty.", hosts);
+    }
+
+    @Transactional(readOnly = true)
+    public DefaultResponseDtoEntity findHostByName(String name) {
+        var host = hostRepository.findHostByName(name).orElseThrow(() -> new HostNotFoundException(name));
+
+        return DefaultResponseDtoEntity.ok("Host lookup successful. ", host);
+    }
+
+    @Transactional
     public DefaultResponseDtoEntity addHost(HostRequestDto hostRequestDto) {
         log.info("호스트 등록 요청: [" + hostRequestDto.getHostName() + "]");
 
@@ -57,6 +73,7 @@ public class HostService {
                 DefaultResponseDtoEntity.of(HttpStatus.CREATED, "Host Modified successfully.");
     }
 
+    @Transactional
     public DefaultResponseDtoEntity deleteHost(String name) {
         log.info("호스트 삭제 요청: [" + name + "]");
 
@@ -65,17 +82,6 @@ public class HostService {
         return col == 1 ? DefaultResponseDtoEntity.ok("Host deleted successfully.") : DefaultResponseDtoEntity.of(HttpStatus.OK, "Host not found: " + name);
     }
 
-    public DefaultResponseDtoEntity findAllHosts() {
-        var hosts = hostRepository.findAll();
-
-        return hosts.size() != 0 ? DefaultResponseDtoEntity.ok("Hosts full lookup.", hosts) : DefaultResponseDtoEntity.ok("Hosts is empty.", hosts);
-    }
-
-    public DefaultResponseDtoEntity findHostByName(String name) {
-        var host = hostRepository.findHostByName(name).orElseThrow(() -> new HostNotFoundException(name));
-
-        return DefaultResponseDtoEntity.ok("Host lookup successful. ", host);
-    }
 
     public void test() {
         var remain = 100 - hostRepository.count();

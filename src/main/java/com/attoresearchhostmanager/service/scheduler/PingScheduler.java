@@ -22,4 +22,5 @@ public class PingScheduler {
     public void pingToHostsScheduler() {
         hostService.findAll().forEach(hostService::pingTest);
     }
+
 }

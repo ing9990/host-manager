@@ -45,7 +45,6 @@ public class HostController {
         return ResponseEntity.status(res.getHttpStatus()).body(res);
     }
 
-    // 데이터베이스에 host를 100개 채우는 API
     @PostMapping("/test")
     public void test() {
         hostService.test();
