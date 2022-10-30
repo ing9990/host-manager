@@ -14,11 +14,12 @@ import java.util.concurrent.Executor;
 @EnableAsync
 @Configuration
 public class AsyncConfig {
-    private static int CORE_POOL_SIZE = 15;
-    private static int MAX_POOL_SIZE = 25;
-    private static int QUEUE_CAPACITY = 10;
-    private static String THREAD_NAME_PREFIX = "host-async-task";
-    
+
+    private static final int CORE_POOL_SIZE = 15;
+    private static final int MAX_POOL_SIZE = 25;
+    private static final int QUEUE_CAPACITY = 10;
+    private static final String THREAD_NAME_PREFIX = "host-async-task";
+
     @Bean
     public Executor asyncTaskExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
